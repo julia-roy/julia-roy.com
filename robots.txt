@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /juliaroy.html
+Disallow: /julia-roy.html
+Allow: /index.html

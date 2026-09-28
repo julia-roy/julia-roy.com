@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>julia_hq</title>
+    <!-- Updated 3 -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" type="image/png" href="favicon-32.png">
+    <link rel="apple-touch-icon" href="favicon-180.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap">
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'arcade') {
+                    document.documentElement.dataset.theme = saved;
+                } else if (!saved && matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.dataset.theme = 'dark';
+                }
+            } catch (e) { /* private mode */ }
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #2a2d30;
+            --secondary: #5a6169;
+            --accent: #4a5568;
+            --muted: #9ca3af;
+            --bg: #efebe3;
+            --border: #e5e7eb;
+            /* Hover treatment: no accent colour. Interactive elements invert
+               to a solid ink pill with white type and a white halo bloom. */
+            --ink-invert: #ffffff;
+            --hover-fill: #14130f;
+            --hover-ring: rgba(20, 19, 15, 0.9);
+            --grid-line: rgba(42, 45, 48, 0.1);
+            /* Solid, not faded -- but in the grey of the sentence rather than
+               black, so the band sits in the same range as the text instead of
+               being the heaviest thing on the page. Greyscale first, because
+               Die Welt's globe is blue and one tinted mark in a row of neutral
+               ones reads as a mistake; then invert, dim, and invert back,
+               which lifts the black ink to grey while the white stays white
+               for multiply to drop. On the beige that lands near #5a6169. */
+            --logo-filter: grayscale(1) invert(1) brightness(0.62) invert(1);
+            --logo-blend: multiply;
+            --halo: rgba(255, 255, 255, 0.75);
+            /* One face, one size and one weight for every piece of text on
+               the page, with a single exception: the greeting in the centre is
+               set in a serif, one step up, because it is the only sentence on
+               the page and it should be the first thing read. Everything else
+               holds flat, so colour and space build the rest of the hierarchy.
+
+               Sized by eye against the mono rather than by number: a serif's
+               lowercase is shorter than the mono's at the same size, so the
+               greeting needs a couple of pixels more just to look a touch
+               bigger. Georgia's lowercase is tall for a serif, so 13px is
+               enough -- 14px read as too big. */
+            --type-size: 11px;
+            --greeting-size: 13px;
+            --greeting-face: Georgia, 'Times New Roman', Times, 'Liberation Serif', serif;
+            --type-weight: 400;
+        }
+
+        [data-theme="dark"] {
+            /* A soft, muted cream on a near-black with the faintest plum in it.
+               Tuned by eye over several rounds: the light page's own #efebe3
+               glared as near-white, a warmer cream was too bright, and a
+               greyish rose read as grey. This sits between -- clearly cream,
+               but quiet. Every light tone in the mode -- words, icons,
+               outlines, logos, hover glow -- is drawn from it, so nothing on
+               the page is brighter than the words. */
+            --primary: #d2c7b3;
+            --secondary: #c0b49e;
+            --accent: #c0b49e;
+            --muted: #877c68;
+            --bg: #0e0d0e;
+            --border: #262324;
+            --grid-line: rgba(192, 180, 158, 0.1);
+            /* Logos ship as black ink on white. Invert them, then walk the white
+               down into the same cream as the words: dim it first so the warm
+               tint is not lost to clipping, then sepia, soften, and settle. A
+               plain invert left them pure white, brighter than any text on the
+               page. Screen drops the (now black) plate. */
+            --logo-filter: grayscale(1) invert(1) brightness(0.8) sepia(1) saturate(0.45) brightness(0.77);
+            --logo-blend: screen;
+            /* On a near-black page the pill only needs to lift, not invert --
+               and it lifts in cream, not white. */
+            --ink-invert: #d2c7b3;
+            --hover-fill: rgba(192, 180, 158, 0.1);
+            --hover-ring: rgba(192, 180, 158, 0.8);
+            --halo: rgba(192, 180, 158, 0.25);
+        }
+
+        /* The third mode: a playful one. An old arcade game's pieces -- words
+           drawn in particles, a blinking block cursor, square buttons, faint
+           scanlines -- on a soft pink, with the ink an emerald green. Bright
+           phosphor green would vanish on pink, so the green deepens to stay
+           legible, and the effects that belonged to a black screen (a heavy
+           glow, dark scanlines, a dark vignette) soften to suit a light one.
+           It is built from the same tokens as the other two themes, so every
+           element that already follows the palette follows it here too. */
+        [data-theme="arcade"] {
+            --primary: #0b5a31;
+            --secondary: #13804a;
+            --accent: #13804a;
+            --muted: #2e8a57;
+            --bg: #f6cadc;
+            --border: #e9a9c4;
+            --grid-line: rgba(19, 128, 74, 0.12);
+            /* A light page again, so the logos go back to solid black ink with
+               the white multiplied away, exactly as in light mode. */
+            --logo-filter: grayscale(1);
+            --logo-blend: multiply;
+            --ink-invert: #f6cadc;
+            --hover-fill: #13804a;
+            --hover-ring: #13804a;
+            --halo: rgba(19, 128, 74, 0.3);
+            --glow: rgba(19, 128, 74, 0.28);
+            --scanline: rgba(176, 58, 112, 0.07);
+            --vignette: rgba(214, 102, 150, 0.22);
+        }
+
+        html {
+            background: var(--bg);
+            /* On the scrolling element, not on body: in standards mode the
+               viewport scrolls <html>, so the old body rule did nothing and
+               the new menu's anchors would have jumped rather than glided. */
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Headings are the one thing that break the flat weight without any
+           stylesheet asking them to -- the UA sheet bolds them. Reset them
+           onto the token rather than re-declaring a weight on each one. */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: var(--type-weight);
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.5;
+            font-weight: var(--type-weight);
+            font-size: var(--type-size);
+            overflow-x: hidden;
+        }
+
+        /* A smaller, thinner pointer. The system arrow is around 24px tall and
+           reads heavy against 11px type; this is the same familiar silhouette
+           at 14px, which is the whole of the change -- shrinking it is the only
+           thing CSS can do to a cursor, so it has to be replaced by a drawing.
+
+           The `auto` and `pointer` fallbacks matter: if the data URI is ever
+           refused, the OS cursor comes back rather than the pointer vanishing.
+
+           Known cost: this overrides the pointer-size setting someone may have
+           turned up in their OS for visibility. There is no media query that
+           exposes that preference, so it cannot be honoured selectively. */
+        body {
+            cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M0.6 0.6 L0.6 11.1 L3.2 8.7 L5.1 12.6 L7 11.85 L5.1 8.1 L8.5 8.1 Z' fill='%23FFFFFF' stroke='%232A2D30' stroke-width='1' stroke-linejoin='round'/></svg>") 1 1, auto;
+        }
+
+        /* Clickable things keep a distinct cursor -- the same arrow inverted.
+           The system hand is not an option here: at its own size it would tower
+           over the idle arrow and the pair would read as a bug. */
+        a,
+        button,
+        .theme-toggle {
+            cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M0.6 0.6 L0.6 11.1 L3.2 8.7 L5.1 12.6 L7 11.85 L5.1 8.1 L8.5 8.1 Z' fill='%232A2D30' stroke='%23FFFFFF' stroke-width='1' stroke-linejoin='round'/></svg>") 1 1, pointer;
+        }
+
+        /* Subtle particle system */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: var(--muted);
+            opacity: 0.3;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Header */
+        .header {
+            padding: 60px 0 40px;
+            position: relative;
+        }
+
+        /* The name alone on the left, the controls on the right -- at every
+           width. When the row gets too narrow for both controls beside the
+           name, they stack on top of each other, still on the right, rather
+           than the whole group dropping under the name. */
+        .header-top {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px 24px;
+            margin-bottom: 0;
+            padding-bottom: 20px;
+        }
+
+        /* A delicate wordmark rather than a masthead: the name sits quietly
+           in the corner and lets the statement below carry the page. Presence
+           comes from the tracking and the space around it, not from scale. */
+        .name {
+            font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: var(--type-size);
+            /* The controls' height, so the name sits level with the first of
+               them whether they are side by side or stacked. */
+            line-height: 28px;
+            flex: none;
+            color: var(--secondary);
+            margin-bottom: 0;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .name::after { content: none; }
+        .name:hover::after { content: none; }
+
+        /* Cryptic letter-roll hover animation */
+        @media (prefers-reduced-motion: reduce) {
+            .scramble {
+                transition: none;
+            }
+        }
+
+        /* Sections */
+        .section {
+            padding: 60px 0;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .section#press {
+            padding-top: 0px;
+            margin-top: 0px;
+        }
+
+        .section:nth-child(even) {
+            background: var(--bg);
+        }
+
+        #press {
+            background: none;
+            padding-top: 0px;
+            margin-top: 0px;
+        }
+
+        /* Editorial section label: a small tracked-out eyebrow rather than a
+           centred heading. It used to trail a hairline out to the margin; the
+           page reads quieter with nothing but the type. */
+        .section-title {
+            font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: var(--type-size);
+            color: var(--muted);
+            text-align: left;
+            margin-bottom: 44px;
+            margin-top: 20px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Subtle hover effect for links */
+        a[style*="border-bottom"]:hover {
+            color: var(--primary) !important;
+            border-bottom-color: var(--primary) !important;
+        }
+
+        /* The first screen is three rows: the header pinned to the top, the
+           press band pinned to the bottom, and the greeting between them.
+           The outer rows share the height 0.88 : 1.12, which sets the greeting
+           a little above the true centre of the screen -- about 45% of the way
+           down, where a single line tends to look centred -- rather than at
+           the centre of whatever the header and the band leave over, which
+           would sit it far higher because the band is the taller of the two.
+           minmax(max-content, ...) is what stops a short window squeezing
+           either of them into the greeting. */
+        .page {
+            display: grid;
+            grid-template-rows: minmax(max-content, 0.88fr) auto minmax(max-content, 1.12fr);
+            /* Without this the one column sizes itself to its widest content,
+               and the press track is deliberately wider than any screen --
+               that is how the logos scroll -- so the whole page grew to the
+               width of the logo strip and the greeting centred on that. */
+            grid-template-columns: minmax(0, 1fr);
+            min-height: 100vh;
+            min-height: 100svh;
+        }
+
+        /* width: 100% because .container centres itself with auto margins,
+           and on a grid item auto margins also switch off the stretch -- so
+           without it the header shrank to its contents and the name and the
+           controls met in the middle instead of facing each other. */
+        .page > .container { align-self: start; width: 100%; }
+        .page > #press { align-self: end; }
+
+        /* The sentence and, under it, the icons: LinkedIn starts beneath the
+           first letter and the rest follow close behind, so the row is a
+           shorter line hanging from the sentence's left edge rather than one
+           trying to match its width. */
+        .hello {
+            display: grid;
+            justify-content: center;
+            row-gap: 18px;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        /* An empty row above the sentence, the height of the icon row below
+           it. Without it the pair centres as a group and the sentence -- the
+           thing that is meant to sit on the centre line -- rides 16px above
+           it with the icons hanging below. */
+        .hello::before {
+            content: '';
+            height: 16px;
+        }
+
+        /* Understated: a step up in size but not in strength -- set in the
+           wordmark's colour rather than full ink, and lowercase as written. */
+        .statement {
+            position: relative;
+            margin: 0;
+            color: var(--secondary);
+            font-family: var(--greeting-face);
+            font-size: var(--greeting-size);
+            letter-spacing: 0.02em;
+        }
+
+        .find-me {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 18px;
+            list-style: none;
+        }
+
+        /* 16px marks with 6px of padding each way: a 28px target, which clears
+           the WCAG 2.2 minimum, while the negative margin keeps the visible
+           spacing at the gap. */
+        .find-me a {
+            display: inline-flex;
+            padding: 6px;
+            margin: -6px;
+            color: var(--muted);
+            transition: color 0.25s ease;
+        }
+
+        .find-me a:hover,
+        .find-me a:focus-visible {
+            color: var(--primary);
+        }
+
+        /* Dark mode sets the icons in the greeting's own cream, so the line
+           and the marks under it are one colour. That leaves nowhere brighter
+           to go on hover -- the step up to --primary is too slight to see --
+           so here hover softens the mark instead of lifting it. */
+        [data-theme="dark"] .find-me a {
+            color: var(--secondary);
+        }
+
+        [data-theme="dark"] .find-me a:hover,
+        [data-theme="dark"] .find-me a:focus-visible {
+            color: var(--muted);
+        }
+
+        .find-me svg {
+            display: block;
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Substack's mark is a solid block that fills its whole square, where
+           the other three are lighter shapes with air around them, so at the
+           same size it looked like the biggest of the four. Scaled rather than
+           resized, so its slot in the row -- and the spacing -- stays the same. */
+        .find-me a[aria-label="Substack"] svg {
+            transform: scale(0.8);
+        }
+
+        /* Press section: infinite logo marquee */
+        #press { background: var(--bg); }
+
+        .press-marquee {
+            overflow: hidden;
+            background: var(--bg);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+            margin-top: 60px;
+        }
+
+        .press-track {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            background: var(--bg);
+            /* 48s a loop: a touch slower than the original 44s, where the eye
+               chased the logos rather than reading them. 72s felt stalled and
+               56s still slow. */
+            animation: press-scroll 48s linear infinite;
+        }
+
+        .press-marquee:hover .press-track,
+        .press-marquee:focus-within .press-track {
+            animation-play-state: paused;
+        }
+
+        .press-track__group {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            background: var(--bg);
+        }
+
+        .press-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            margin-right: 64px;
+        }
+
+        /* The common logo height, set once so the phone size below can
+           change it in one place and the per-logo nudges scale with it. */
+        .press-marquee {
+            --logo-h: 24px;
+        }
+
+        /* Same box, different weight: a few marks read bigger or smaller than
+           the rest at the common height, so each is nudged by eye. The
+           Guardian stacks its name on two lines, each tiny at 24px; Die Welt
+           carries a solid globe and Kurier is a solid bar, both heavier than
+           the lettering around them. Matched by file rather than alt text so
+           the unlabelled copies in the looping half get the same size. */
+        .press-item img[src*="the-guardian"] { --logo-scale: 1.25; }
+        .press-item img[src*="die-welt"] { --logo-scale: 0.8; }
+        .press-item img[src*="kurier"] { --logo-scale: 0.75; }
+
+        .press-item img {
+            /* Three-quarters of the 32px they were: at full size, solid, they
+               outweighed the 11-13px type around them. Height is what sets
+               the size; the width cap is only a backstop, and it has to be
+               generous. At 98px the widest marks hit it first and shrank --
+               Los Angeles Times, nearly seven times as wide as it is tall, came
+               out at 14px against everyone else's 24. At 125px it sits at 18px
+               and, being the widest in the row, reads as the same size. */
+            max-height: calc(var(--logo-h) * var(--logo-scale, 1));
+            max-width: calc(var(--logo-h) * 5.2);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            filter: var(--logo-filter);
+            mix-blend-mode: var(--logo-blend);
+        }
+
+        @keyframes press-scroll {
+            to { transform: translateX(-50%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .press-track {
+                animation: none;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .press-track__group[aria-hidden="true"] {
+                display: none;
+            }
+
+            /* The group itself has to wrap too -- and be allowed to shrink to
+               the band's width first, or there is nothing to wrap against.
+               Only the track wrapped, so the twenty logos stayed one row
+               several screens wide, centred and clipped at both edges: a
+               visitor who had asked for less motion only ever saw the middle
+               few. */
+            .press-track__group {
+                flex: 1 1 100%;
+                min-width: 0;
+                flex-wrap: wrap;
+                justify-content: center;
+                row-gap: 20px;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 30px;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header {
+                padding: 40px 0 30px;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .press-item {
+                height: 50px;
+                margin-right: 48px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .press-item {
+                height: 45px;
+                margin-right: 36px;
+            }
+
+            .nav {
+                gap: 16px;
+            }
+
+            .header {
+                padding: 30px 0 20px;
+            }
+
+            .section {
+                padding: 40px 0;
+            }
+
+            .press-marquee {
+                --logo-h: 20px;
+            }
+        }
+
+        /* Intelligent animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            /* Only what actually animates. `all` also caught background-color,
+               so switching theme dragged this band through an 0.8s fade and
+               left a visible lighter stripe behind the rest of the page. */
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #press.section {
+            padding-top: 40px;
+            padding-bottom: 90px;
+            margin-top: 0px;
+            /* The marquee is one band of logos; the inherited min-height:100vh
+               left ~600px of empty page hanging below it. */
+            min-height: auto;
+        }
+
+        /* Responsive fallback */
+
+        /* Scientific grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.03;
+        }
+
+        .grid-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* The colour-mode switch: one outlined frame holding its three
+           options. (The cursor is set once for everything clickable, further
+           up. A `cursor: pointer` here would sit later in the sheet at the same
+           specificity and quietly win, putting the full-size system hand back.) */
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+            min-width: 0;
+            border: 1px solid var(--border-strong, currentColor);
+            border-radius: 100vw;
+            color: var(--secondary);
+            background: transparent;
+        }
+
+        /* Contact is the word alone -- no frame -- and hovering scrambles it.
+           It takes the switch's 28px height so the two sit on one centre
+           line. */
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            height: 28px;
+            color: var(--secondary);
+            font-size: var(--type-size);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus-visible {
+            color: var(--primary);
+        }
+
+        .theme-toggle svg {
+            display: block;
+        }
+
+        /* Three options side by side inside the one frame -- light, dark,
+           arcade -- so it is plain at a glance that there are three to choose
+           from. The one you are on is filled in, the way the Contact button
+           fills in on hover; the others stay as outlines. */
+        .theme-toggle {
+            gap: 2px;
+            padding: 0 3px;
+        }
+
+        .theme-toggle__option {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            color: inherit;
+            background: transparent;
+            transition: color 0.25s ease, background-color 0.25s ease;
+        }
+
+        .theme-toggle__option svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* The invader is wider than it is tall; at the sun's square it would
+           read as a smudge, so it gets the width and gives up height. */
+        .theme-toggle__option .icon-arcade {
+            height: 9.5px;
+        }
+
+        .theme-toggle__option:hover,
+        .theme-toggle__option:focus-visible {
+            color: var(--primary);
+        }
+
+        .theme-toggle__option[aria-pressed="true"] {
+            color: var(--bg);
+            background-color: var(--secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px 22px;
+        }
+
+        /* The smallest phones: the name's tracking eases and the gap beside
+           it narrows, so that it and the stacked controls still share one row
+           -- with room to spare. At 0.2em and a 24px gap there were only 4px
+           in hand, and a slightly wider fallback face (used until IBM Plex
+           Mono arrives, or if it never does) pushed Contact off the screen. */
+        @media (max-width: 359px) {
+            .header-top {
+                column-gap: 16px;
+            }
+
+            .name {
+                letter-spacing: 0.14em;
+            }
+        }
+
+        .nav {
+            display: flex;
+            gap: 22px;
+        }
+
+        /* Anchor targets stop clear of the top of the viewport rather than
+           flush against it, so a jumped-to section does not look clipped. */
+        #press {
+            scroll-margin-top: 40px;
+        }
+
+        /* ---- arcade mode ------------------------------------------------- */
+
+        /* Scanlines and a vignette, laid over the whole screen. Above the
+           content so the lines cross the type as they would on a tube, and
+           pointer-events: none so nothing underneath stops being clickable. */
+        .crt {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(to bottom,
+                    transparent 0, transparent 2px,
+                    var(--scanline) 2px, var(--scanline) 3px),
+                radial-gradient(ellipse at center, transparent 58%, var(--vignette) 100%);
+        }
+
+        [data-theme="arcade"] .crt {
+            display: block;
+        }
+
+        /* In this mode the particles are in the letters, not in the air. */
+        [data-theme="arcade"] .particles {
+            display: none;
+        }
+
+        /* Text drawn as particles, by script, only in this mode. The words
+           stay in the page underneath -- selectable, read aloud, and still
+           there if the script never runs -- but once the dots are drawn the
+           real text gives up its colour so that only the dots show. */
+        .particle-text__canvas {
+            position: absolute;
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px var(--glow));
+        }
+
+        [data-theme="arcade"] .is-particle-text {
+            color: transparent;
+            text-shadow: none;
+        }
+
+        /* Phosphor bleeds: every letter carries a little of its own glow. */
+        [data-theme="arcade"] body {
+            text-shadow: 0 0 3px var(--glow);
+        }
+
+        [data-theme="arcade"] .find-me svg {
+            filter: drop-shadow(0 0 2px var(--glow));
+        }
+
+        /* Cabinet buttons are square. */
+        [data-theme="arcade"] .theme-toggle,
+        [data-theme="arcade"] .theme-toggle__option {
+            border-radius: 0;
+        }
+
+        /* A block cursor waiting after the greeting. Positioned out of flow so
+           it does not pull the sentence off the centre line. */
+        [data-theme="arcade"] .statement::after {
+            content: '';
+            position: absolute;
+            left: calc(100% + 0.35em);
+            top: 50%;
+            width: 0.6em;
+            height: 1.1em;
+            background: var(--secondary);
+            box-shadow: 0 0 4px var(--glow);
+            transform: translateY(-50%);
+            animation: caret-blink 1.06s steps(1) infinite;
+        }
+
+        @keyframes caret-blink {
+            50% { opacity: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            [data-theme="arcade"] .statement::after {
+                animation: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Scientific grid overlay -->
+    <div class="grid-overlay"></div>
+
+    <!-- Particle system -->
+    <div class="particles"></div>
+
+    <!-- Arcade mode only -->
+    <div class="crt" aria-hidden="true"></div>
+
+    <div class="page">
+
+    <div class="container">
+        <header class="header">
+            <div class="header-top">
+                <h1 class="name">Julia Roy</h1>
+
+                <div class="header-actions">
+                    <div class="theme-toggle" id="theme-toggle" role="group" aria-label="Colour mode">
+                        <button type="button" class="theme-toggle__option" data-theme-option="light"
+                                aria-label="Light mode" aria-pressed="true"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg></button>
+                        <button type="button" class="theme-toggle__option" data-theme-option="dark"
+                                aria-label="Dark mode" aria-pressed="false"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8Z"/></svg></button>
+                        <button type="button" class="theme-toggle__option" data-theme-option="arcade"
+                                aria-label="Arcade mode" aria-pressed="false"><svg class="icon-arcade" viewBox="0 0 11 8" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1h-1zM8 0h1v1h-1zM3 1h1v1h-1zM7 1h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM1 3h1v1h-1zM2 3h1v1h-1zM4 3h1v1h-1zM5 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM0 4h1v1h-1zM1 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM7 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM0 5h1v1h-1zM2 5h1v1h-1zM3 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM7 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM0 6h1v1h-1zM2 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM3 7h1v1h-1zM4 7h1v1h-1zM6 7h1v1h-1zM7 7h1v1h-1z"/></svg></button>
+                    </div>
+                    <nav class="nav" aria-label="Primary">
+                        <a class="nav-link" href="mailto:contact@julia-roy.com">Contact</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <main class="hello">
+        <p class="statement">hey, you can find me here</p>
+        <ul class="find-me" aria-label="Find me elsewhere">
+            <li><a href="https://www.linkedin.com/in/juliar4290" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></a></li>
+            <li><a href="https://juliahq.substack.com/" target="_blank" rel="noopener noreferrer" aria-label="Substack"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg></a></li>
+            <li><a href="https://github.com/julia-roy" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Julia_Roy" target="_blank" rel="noopener noreferrer" aria-label="Wikipedia"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.09 13.119c-.936 1.932-2.217 4.548-2.853 5.728-.616 1.074-1.127.931-1.532.029-1.406-3.321-4.293-9.144-5.651-12.409-.251-.601-.441-.987-.619-1.139-.181-.15-.554-.24-1.122-.271C.103 5.033 0 4.982 0 4.898v-.455l.052-.045c.924-.005 5.401 0 5.401 0l.051.045v.434c0 .119-.075.176-.225.176l-.564.031c-.485.029-.727.164-.727.436 0 .135.053.33.166.601 1.082 2.646 4.818 10.521 4.818 10.521l.136.046 2.411-4.81-.482-1.067-1.658-3.264s-.318-.654-.428-.872c-.728-1.443-.712-1.518-1.447-1.617-.207-.023-.313-.05-.313-.149v-.468l.06-.045h4.292l.113.037v.451c0 .105-.076.15-.227.15l-.308.047c-.792.061-.661.381-.136 1.422l1.582 3.252 1.758-3.504c.293-.64.233-.801.111-.947-.07-.084-.305-.22-.812-.24l-.201-.021c-.052 0-.098-.015-.145-.051-.045-.031-.067-.076-.067-.129v-.427l.061-.045c1.247-.008 4.043 0 4.043 0l.059.045v.436c0 .121-.059.178-.193.178-.646.03-.782.095-1.023.439-.12.186-.375.589-.646 1.039l-2.301 4.273-.065.135 2.792 5.712.17.048 4.396-10.438c.154-.422.129-.722-.064-.895-.197-.172-.346-.273-.857-.295l-.42-.016c-.061 0-.105-.014-.152-.045-.043-.029-.072-.075-.072-.119v-.436l.059-.045h4.961l.041.045v.437c0 .119-.074.18-.209.18-.648.03-1.127.18-1.443.421-.314.255-.557.616-.736 1.067 0 0-4.043 9.258-5.426 12.339-.525 1.007-1.053.917-1.503-.031-.571-1.171-1.773-3.786-2.646-5.71l.053-.036z"/></svg></a></li>
+        </ul>
+    </main>
+
+    <!-- Press Section -->
+    <section id="press" class="section fade-in">
+        <div class="container">
+            <h2 class="section-title">Featured In</h2>
+            <div class="press-marquee" role="region" aria-label="Featured in press">
+                <div class="press-track">
+                    <div class="press-track__group">
+                        <div class="press-item"><img src="logos/press/le-monde.avif" alt="Le Monde" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/elle.avif" alt="ELLE" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/marie-claire.avif" alt="Marie Claire" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/la-times.avif" alt="LA Times" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/variety.avif" alt="Variety" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/harpers-bazaar.avif" alt="Harper's Bazaar" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/glamour.avif" alt="Glamour" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/vanity-fair.avif" alt="Vanity Fair" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/hollywood-reporter.avif" alt="The Hollywood Reporter" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/madame-figaro.avif" alt="Madame Figaro" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/der-standard.avif" alt="Der Standard" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/die-zeit.avif" alt="Die Zeit" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/crash-magazine.avif" alt="Crash Magazine" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/die-welt.avif" alt="Die Welt" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/plugged.avif" alt="Plugged" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/positif.avif" alt="Positif" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/liberation.avif" alt="Libération" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/grazia.avif" alt="Grazia" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/the-guardian.png" alt="The Guardian" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/kurier.avif" alt="Kurier" loading="lazy" decoding="async"></div>
+                    </div>
+                    <div class="press-track__group" aria-hidden="true">
+                        <div class="press-item"><img src="logos/press/le-monde.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/elle.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/marie-claire.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/la-times.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/variety.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/harpers-bazaar.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/glamour.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/vanity-fair.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/hollywood-reporter.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/madame-figaro.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/der-standard.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/die-zeit.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/crash-magazine.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/die-welt.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/plugged.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/positif.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/liberation.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/grazia.avif" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/the-guardian.png" alt="" loading="lazy" decoding="async"></div>
+                        <div class="press-item"><img src="logos/press/kurier.avif" alt="" loading="lazy" decoding="async"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+
+    </div>
+
+    <script>
+
+        // Subtle particle system
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 20 + 's';
+                    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                    particlesContainer.appendChild(particle);
+                }, i * 1000);
+            }
+        }
+
+        /* Hover scramble.
+           The effect this replaces built two stacked copies of each letter and
+           slid between them -- but both copies carried the same character, so
+           it rolled and landed on exactly what was already there. It animated
+           and communicated nothing.
+
+           This one cycles each character through random glyphs and resolves
+           left to right, which is the effect that was actually wanted. The
+           face is monospaced and the substitutes are the same length, so
+           nothing reflows while it runs. */
+        const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/<>*';
+        // Every letter scrambles together for a moment, then they land one
+        // per frame from the left. Landing from the very first frame -- as it
+        // used to -- meant the first letters barely changed before they
+        // settled, so the effect only showed on the end of the word. At 26ms
+        // a frame CONTACT takes about 0.4s in all.
+        const SCRAMBLE_FRAME_MS = 26;
+        const SCRAMBLE_HOLD_FRAMES = 8;
+
+        function scrambleOnHover(link) {
+            const label = link.textContent.trim();
+            if (!label) return;
+
+            // The text is rewritten frame by frame, so the accessible name has
+            // to come from somewhere that does not change.
+            link.setAttribute('aria-label', label);
+            link.textContent = label;
+
+            let timer = null;
+            let frame = 0;
+
+            function stop(final) {
+                clearInterval(timer);
+                timer = null;
+                link.textContent = final;
+            }
+
+            function start() {
+                if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                if (timer) return;
+                frame = 0;
+                timer = setInterval(() => {
+                    frame += 1;
+                    const settled = Math.max(0, frame - SCRAMBLE_HOLD_FRAMES);
+                    if (settled >= label.length) {
+                        stop(label);
+                        return;
+                    }
+                    link.textContent = label
+                        .split('')
+                        .map((ch, i) => {
+                            if (i < settled || ch === ' ') return ch;
+                            // Never the letter itself, or a scrambled frame can
+                            // look like nothing happened in that position.
+                            let glyph;
+                            do {
+                                glyph = SCRAMBLE_GLYPHS.charAt(
+                                    Math.floor(Math.random() * SCRAMBLE_GLYPHS.length));
+                            } while (glyph === ch.toUpperCase());
+                            return glyph;
+                        })
+                        .join('');
+                }, SCRAMBLE_FRAME_MS);
+            }
+
+            link.addEventListener('mouseenter', start);
+            link.addEventListener('focus', start);
+            // Leaving mid-run must not strand a half-scrambled label on screen.
+            link.addEventListener('mouseleave', () => stop(label));
+            link.addEventListener('blur', () => stop(label));
+        }
+
+        document.querySelectorAll('.nav-link').forEach(scrambleOnHover);
+
+
+        // Colour mode: three options in one frame, each choosing its mode
+        // directly. Applied pre-paint by the inline head script, so this only
+        // has to handle the choosing and keep aria-pressed honest.
+        (function () {
+            const options = document.querySelectorAll('.theme-toggle__option');
+            if (!options.length) return;
+
+            const THEMES = ['light', 'dark', 'arcade'];
+            const root = document.documentElement;
+            const current = () => (THEMES.includes(root.dataset.theme) ? root.dataset.theme : 'light');
+
+            function sync() {
+                const now = current();
+                options.forEach(option => {
+                    option.setAttribute('aria-pressed', String(option.dataset.themeOption === now));
+                });
+                document.dispatchEvent(new CustomEvent('themechange', { detail: now }));
+            }
+
+            options.forEach(option => option.addEventListener('click', () => {
+                const next = option.dataset.themeOption;
+                if (next === current()) return;
+                if (next === 'light') {
+                    delete root.dataset.theme;
+                } else {
+                    root.dataset.theme = next;
+                }
+                try {
+                    localStorage.setItem('theme', next);
+                } catch (e) { /* private mode */ }
+                sync();
+            }));
+
+            sync();
+        })();
+
+        // Arcade text. In arcade mode the name and the greeting are drawn as
+        // particles -- only those two, the parts that are Julia's own; the
+        // "Featured in" label stays plain, as it read best that way: every lit cell of a letter becomes a dot that knows where
+        // home is. They fly in and assemble when the mode switches on, shimmer
+        // while they sit, scatter from the pointer and drift back. The real
+        // text stays underneath with only its colour taken away, so it can
+        // still be selected and read aloud -- and if any of this fails, it
+        // simply shows as it does in the other two modes. The icons stay as
+        // they are: the words are the thing made of particles.
+        (function () {
+            const SELECTOR = '.name, .statement';
+            const PAD = 36;      // room around the words for the dots to scatter into
+            const PITCH = 1;     // CSS px between dot centres -- dense enough to read
+            const DOT = 1;       // CSS px dot size
+            // Mean alpha (of 255) a letter cell needs to become a dot. At 45 the
+            // faint antialiased tip of Georgia's e -- which ends in a fine
+            // tapered stroke at the bottom right -- counted as solid, and hung
+            // a small tail under every e. 70 drops it and keeps the strokes'
+            // weight; higher starts to thin and break the letters.
+            const LIT = 70;
+            const REPEL = 34;    // pointer radius, CSS px
+            const SPARKLE = '#fbfff9'; // the colour of light catching a dot
+            const still = matchMedia('(prefers-reduced-motion: reduce)');
+            const root = document.documentElement;
+
+            let pieces = [];
+            let raf = null;
+            let last = 0;
+            const pointer = { x: -9999, y: -9999 };
+
+            // One rect per visible character, read from the page's own layout,
+            // so letter-spacing and text-transform come out exactly as the
+            // real text sets them rather than as a canvas would guess.
+            function glyphs(el) {
+                const out = [];
+                const upper = getComputedStyle(el).textTransform === 'uppercase';
+                const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+                const range = document.createRange();
+                for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+                    const text = node.textContent;
+                    for (let i = 0; i < text.length; i++) {
+                        if (!text[i].trim()) continue;
+                        range.setStart(node, i);
+                        range.setEnd(node, i + 1);
+                        const r = range.getBoundingClientRect();
+                        if (r.width) out.push({ ch: upper ? text[i].toUpperCase() : text[i], r: r });
+                    }
+                }
+                return out;
+            }
+
+            function build(el) {
+                const style = getComputedStyle(el);
+                // The resting colour, not wherever a transition has got to:
+                // read mid-fade, the dots came out in the previous theme's tone.
+                const transition = el.style.transition;
+                el.style.transition = 'none';
+                const colour = getComputedStyle(el).color;
+                el.style.transition = transition;
+                const box = el.getBoundingClientRect();
+                const letters = glyphs(el);
+                if (!box.width || !letters.length) return null;
+                const pad = PAD;
+
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const w = box.width + pad * 2;
+                const h = box.height + pad * 2;
+
+                // Set the letters once, offscreen, then read back which cells are lit.
+                const scratch = document.createElement('canvas');
+                scratch.width = Math.ceil(w * dpr);
+                scratch.height = Math.ceil(h * dpr);
+                const sctx = scratch.getContext('2d', { willReadFrequently: true });
+                sctx.scale(dpr, dpr);
+                sctx.fillStyle = '#fff';
+                sctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+                sctx.textBaseline = 'middle';
+                for (const g of letters) {
+                    sctx.fillText(g.ch, g.r.left - box.left + pad,
+                                  g.r.top + g.r.height / 2 - box.top + pad);
+                }
+                const pixels = sctx.getImageData(0, 0, scratch.width, scratch.height).data;
+
+                // A cell lights on its mean coverage, which keeps the strokes at
+                // an even weight -- sampling only the centre dropped whichever
+                // strokes fell between two sample points.
+                const dots = [];
+                const cell = Math.max(1, Math.round(PITCH * dpr));
+                for (let y = 0; y + PITCH <= h; y += PITCH) {
+                    for (let x = 0; x + PITCH <= w; x += PITCH) {
+                        const x0 = Math.floor(x * dpr);
+                        const y0 = Math.floor(y * dpr);
+                        let sum = 0;
+                        for (let yy = y0; yy < y0 + cell; yy++) {
+                            for (let xx = x0; xx < x0 + cell; xx++) {
+                                sum += pixels[(yy * scratch.width + xx) * 4 + 3];
+                            }
+                        }
+                        if (sum / (cell * cell) > LIT) {
+                            dots.push({
+                                hx: x, hy: y, x: x, y: y, vx: 0, vy: 0,
+                                phase: Math.random() * Math.PI * 2,
+                                // One dot in eight can catch the light at all,
+                                // each on its own rhythm, every 2.5-6s, so the
+                                // glints scatter across the words rather than
+                                // flashing in step.
+                                sparkles: Math.random() < 0.12,
+                                rate: (Math.PI * 2) / (2500 + Math.random() * 3500),
+                                // A quarter of those are facets that throw a star.
+                                facet: Math.random() < 0.25,
+                            });
+                        }
+                    }
+                }
+                if (!dots.length) return null;
+
+                const canvas = document.createElement('canvas');
+                canvas.className = 'particle-text__canvas';
+                canvas.setAttribute('aria-hidden', 'true');
+                canvas.width = Math.ceil(w * dpr);
+                canvas.height = Math.ceil(h * dpr);
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                canvas.style.left = -pad + 'px';
+                canvas.style.top = -pad + 'px';
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+
+                el.appendChild(canvas);
+                el.classList.add('is-particle-text');
+                return { el: el, canvas: canvas, ctx: ctx, dots: dots, w: w, h: h, dpr: dpr, colour: colour };
+            }
+
+            // How sharp a glint is: the sine is raised to this power, so it sits
+            // near zero almost all the time and spikes for an instant -- a flash
+            // of light off a facet rather than a slow pulse. At 28, with every
+            // dot able to glint, about one dot in twelve was flashing at once:
+            // over a hundred across the greeting, which read as fizzing rather
+            // than sparkle. Now only one dot in eight can glint at all, and
+            // each flash is briefer -- around ten lit at any moment.
+            const GLINT_SHARPNESS = 60;
+
+            function draw(piece, now) {
+                const { ctx, dots, dpr } = piece;
+                ctx.clearRect(0, 0, piece.w, piece.h);
+                const snap = v => Math.round(v * dpr) / dpr;
+                const glints = [];
+
+                ctx.fillStyle = piece.colour;
+                for (const d of dots) {
+                    // Each dot breathes on its own phase, which is what makes the
+                    // letters read as made of particles even while they sit still.
+                    ctx.globalAlpha = still.matches ? 1 : 0.72 + 0.28 * Math.sin(now / 380 + d.phase);
+                    ctx.fillRect(snap(d.x), snap(d.y), DOT, DOT);
+                    if (d.sparkles && !still.matches) {
+                        const glint = Math.pow(0.5 + 0.5 * Math.sin(now * d.rate + d.phase), GLINT_SHARPNESS);
+                        if (glint > 0.04) glints.push([d, glint]);
+                    }
+                }
+
+                // Then the light catching them: every glinting dot flashes pale,
+                // and the few that are facets throw a small four-point star --
+                // the sparkle of a cut stone, not a steady glow.
+                ctx.fillStyle = SPARKLE;
+                for (const [d, glint] of glints) {
+                    const x = snap(d.x);
+                    const y = snap(d.y);
+                    ctx.globalAlpha = glint * 0.85;
+                    ctx.fillRect(x, y, DOT, DOT);
+                    if (d.facet && glint > 0.4) {
+                        const arm = 1 + 1.5 * glint;
+                        ctx.globalAlpha = glint * 0.6;
+                        ctx.fillRect(x - arm, y, DOT * 2 * arm + DOT, DOT * 0.5);
+                        ctx.fillRect(x, y - arm, DOT * 0.5, DOT * 2 * arm + DOT);
+                    }
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            function step(now) {
+                const dt = Math.min((now - last) / 16.7, 3);
+                last = now;
+                for (const piece of pieces) {
+                    const r = piece.canvas.getBoundingClientRect();
+                    const px = pointer.x - r.left;
+                    const py = pointer.y - r.top;
+                    for (const d of piece.dots) {
+                        const dx = d.x - px;
+                        const dy = d.y - py;
+                        const dist = Math.hypot(dx, dy);
+                        if (dist < REPEL && dist > 0) {
+                            const push = (1 - dist / REPEL) * 1.6 * dt;
+                            d.vx += (dx / dist) * push;
+                            d.vy += (dy / dist) * push;
+                        }
+                        // A spring home, damped just short of overshooting.
+                        d.vx = (d.vx + (d.hx - d.x) * 0.045 * dt) * Math.pow(0.82, dt);
+                        d.vy = (d.vy + (d.hy - d.y) * 0.045 * dt) * Math.pow(0.82, dt);
+                        d.x += d.vx * dt;
+                        d.y += d.vy * dt;
+                    }
+                    draw(piece, now);
+                }
+                raf = requestAnimationFrame(step);
+            }
+
+            function clear() {
+                for (const piece of pieces) {
+                    piece.canvas.remove();
+                    piece.el.classList.remove('is-particle-text');
+                }
+                pieces = [];
+            }
+
+            function stop() {
+                if (raf) cancelAnimationFrame(raf);
+                raf = null;
+                clear();
+            }
+
+            function start(intro) {
+                clear();
+                for (const el of document.querySelectorAll(SELECTOR)) {
+                    const piece = build(el);
+                    if (piece) pieces.push(piece);
+                }
+                if (!pieces.length) return stop();
+
+                if (still.matches) {
+                    const now = performance.now();
+                    pieces.forEach(piece => draw(piece, now));
+                    return;
+                }
+                // Arriving: every dot starts somewhere in the margin around
+                // its word and flies home, so the text assembles out of them.
+                if (intro) {
+                    for (const piece of pieces) {
+                        for (const d of piece.dots) {
+                            d.x = Math.random() * piece.w;
+                            d.y = Math.random() * piece.h;
+                        }
+                    }
+                }
+                if (!raf) {
+                    last = performance.now();
+                    raf = requestAnimationFrame(step);
+                }
+            }
+
+            // Sampling has to wait for IBM Plex Mono: sampled any earlier, the
+            // dots would trace the fallback face's letters instead.
+            const whenFontsReady = fn => (document.fonts ? document.fonts.ready.then(fn) : fn());
+
+            document.addEventListener('themechange', event => {
+                if (event.detail === 'arcade') whenFontsReady(() => start(true));
+                else stop();
+            });
+
+            let resizeTimer = null;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (root.dataset.theme === 'arcade') start(false);
+                }, 150);
+            });
+            window.addEventListener('pointermove', event => {
+                pointer.x = event.clientX;
+                pointer.y = event.clientY;
+            }, { passive: true });
+            root.addEventListener('pointerleave', () => {
+                pointer.x = pointer.y = -9999;
+            });
+
+            // The switch announces the saved theme once on load, before this
+            // listener exists -- so a visit that opens in arcade mode has to
+            // start itself rather than wait for an event it missed.
+            if (root.dataset.theme === 'arcade') whenFontsReady(() => start(true));
+        })();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intelligent scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+        });
+
+        // Parallax effect for particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const particles = document.querySelector('.particles');
+            const speed = scrolled * 0.1;
+            
+            if (particles) {
+                particles.style.transform = `translateY(${speed}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
